@@ -1,5 +1,5 @@
 import argparse
-from recorder import recorder
+from musrec.recorder import recorder
 
 def main():
     parser = argparse.ArgumentParser(description='Records music and exports them to audio files automatically.')

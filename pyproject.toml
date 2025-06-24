@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "MusRec"
+version = "1.0.0"
+description = "Records and exports music while it plays with automatic metadata tagging"
+authors = [
+  { name = "Astra C.", email = "astra.the.boop@icloud.com" }
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.9"
+
+dependencies = [
+    "numpy",
+    "sounddevice",
+    "soundfile",
+    "mutagen"
+]
+
+[project.scripts]
+musrec = "musrec.main:main"
+
+[tool.setuptools]
+packages = ["musrec"]

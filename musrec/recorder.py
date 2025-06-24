@@ -2,14 +2,17 @@
 #https://github.com/ExistentialAudio/BlackHole
 #also ffmpeg too
 #recorder.py
+#thankyu tobycm for refactoring my spaghetti ahh code :wilted flower emoji:
 import os
 import subprocess
+import sys
+import shutil
 from time import sleep, time
 
 import numpy as np
 import sounddevice as sd
 import soundfile as sf
-import tracks as t
+import musrec.tracks as t
 from mutagen.easyid3 import EasyID3
 from mutagen.flac import FLAC, Picture
 from mutagen.id3 import APIC, ID3
@@ -31,9 +34,19 @@ def recorder(track_count,
             print(status)
         recordedChunks.append(indata.copy())
 
+    if not skipWarning:
+        #checks if external (non-python) dependencies / apps are presents :(
+        if sys.platform != 'darwin':
+            raise RuntimeError('!! MusRec currently only supports MacOS !!')
+        if not shutil.which('ffmpeg'):
+            sys.exit(1) if input("Missing: ffmpeg; ffmpeg is required for .mp3, .flac, .ogg exports\n\nPlease install it via Homebrew:\nbrew install ffmpeg\n\nEnter [c] to cancel; enter anything else to proceed") == "c" else None
+        if not shutil.which('SwitchAudioSource'):
+            sys.exit(1) if input("Missing: SwitchAudioSource; SwitchAudioSource is required to detect current output device\n\nPlease install it via Homebrew:\nbrew install switchaudio-osx\n\nEnter [c] to cancel; enter anything else to proceed") == "c" else None
+
     device_index = check_blackhole()
 
     if not skipWarning and not check_blackhole_selected():
+
         if input(
                 "BlackHole or a Multi-Output Device isn't detected as output device, enter [c] to cancel. Enter anything else to proceed_ "
         ) == "c":
@@ -186,9 +199,7 @@ install_blackhole = """It seems like BlackHole isn't installed :( Please install
 
 https://github.com/ExistentialAudio/BlackHole
 
-If it is installed then check if the name of the audio device is 'BlackHole 2ch' in Audio MIDI Setup and is being used as device output.
-
-If you're not on a Mac device, please use the other version of this app"""
+If it is installed then check if the name of the audio device is 'BlackHole 2ch' in Audio MIDI Setup and is being used as device output."""
 
 
 def check_blackhole() -> int:
@@ -206,9 +217,10 @@ def check_blackhole() -> int:
 
 
 def check_blackhole_selected() -> bool:
-    """
-    Check if BlackHole is selected as the output device.
-    """
-    output_devices = subprocess.check_output(
-        ["SwitchAudioSource", "-t", "output", "-c"], text=True)
-    return "BlackHole" in output_devices or "Multi-Output" in output_devices
+    #Check if BlackHole is selected as the output device.
+    try:
+        output_devices = subprocess.check_output(
+            ["SwitchAudioSource", "-t", "output", "-c"], text=True)
+        return "BlackHole" in output_devices or "Multi-Output" in output_devices
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return True if input("Warning: SwitchAudioSource not found, please check manually if BlackHole is currently being used as audio output in System Settings > Sound > Output; Enter [c] to cancel")!="c" else sys.exit(1)
