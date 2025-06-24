@@ -2,6 +2,7 @@
 #https://github.com/ExistentialAudio/BlackHole
 #also ffmpeg too
 #recorder.py
+from mutagen.flac import FLAC
 
 import tracks as t
 import sounddevice as sd
@@ -10,6 +11,7 @@ import time, os, subprocess
 import numpy as np
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3, APIC
+from mutagen.flac import FLAC, Picture
 
 def recorder(recLen, fileType = "wav", sample_rate = 44100, channels = 2, blocksize = 1024, skipWarning = False, outputDir = "."):
     os.makedirs(outputDir, exist_ok = True)
@@ -32,7 +34,7 @@ def recorder(recLen, fileType = "wav", sample_rate = 44100, channels = 2, blocks
         If you're not on a Mac device, please use the other version of this app""")
     if not skipWarning:
         if not ("BlackHole" in subprocess.check_output(["SwitchAudioSource","-t","output","-c"], text=True).strip() or "Multi-Output" in subprocess.check_output(["SwitchAudioSource","-t","output","-c"], text=True).strip()):
-            raise RuntimeError("Interrupted — Check in System Settings > Sound > Output if BlackHole is selected") if input("BlackHole or a Multi-Output Device isn't detected as output device, enter [c] to cancel") == "c" else print("WARNING: BlackHole or a Multi-Output Device isn't detected as output device, audio file may return empty")
+            raise RuntimeError("Interrupted — Check in System Settings > Sound > Output if BlackHole is selected") if input("BlackHole or a Multi-Output Device isn't detected as output device, enter [c] to cancel. Enter anything else to proceed_ ") == "c" else print("WARNING: BlackHole or a Multi-Output Device isn't detected as output device, audio file may return empty")
     print(f"Using device index: {device_index}")
 
 
@@ -71,7 +73,7 @@ def recorder(recLen, fileType = "wav", sample_rate = 44100, channels = 2, blocks
             sf.write(f"{outputDir}/{title} — {artist}.wav", audio, sample_rate)
             if fileType == "wav":
                 print(f"Saved as '{title} — {artist}.wav' in {outputDir}/. If audio is blank, check if 'BlackHole 2ch' or a multi-output device with it is being used for sound output in Audio MIDI Setup")
-            else:
+            elif fileType == "mp3":
                 subprocess.run(["ffmpeg", "-y", "-i", f"{outputDir}/{title} — {artist}.wav", "-codec:a", "libmp3lame", "-qscale:a", "0", f"{outputDir}/{title} — {artist}.mp3"])
                 os.remove(f"{outputDir}/{title} — {artist}.wav")
                 print(f"Saved as '{title} — {artist}.mp3' in {outputDir}/. If audio is blank, check if 'BlackHole 2ch' or a multi-output device with it is being used for sound output in Audio MIDI Setup")
@@ -91,6 +93,29 @@ def recorder(recLen, fileType = "wav", sample_rate = 44100, channels = 2, blocks
                             desc=f"Cover of {title} — {artist}",
                             data=albumArt.read()
                         ))
+                    file.save()
+                print("Metadata saved")
+                try:
+                    os.remove("cover.jpg")
+                except FileNotFoundError:
+                    pass
+            elif fileType == "flac":
+                subprocess.run(["ffmpeg", "-y", "-i", f"{outputDir}/{title} — {artist}.wav", "-codec:a", "flac", f"{outputDir}/{title} — {artist}.flac"])
+                os.remove(f"{outputDir}/{title} — {artist}.wav")
+                print(f"Saved as '{title} — {artist}.flac' in {outputDir}/. If audio is blank, check if 'BlackHole 2ch' or a multi-output device with it is being used for sound output in Audio MIDI Setup")
+                print("Writing metadata...")
+                file = FLAC(f"{outputDir}/{title} — {artist}.flac")
+                file["title"] = title
+                file["artist"] = artist
+                file["album"] = album
+                if t.fetchAlbumCover(title, artist, album, "cover.jpg") != None:
+                    with open("cover.jpg", "rb") as albumArt:
+                        art = Picture()
+                        art.type = 3
+                        art.mime = "image/jpeg"
+                        art.desc = "Cover of {title} — {artist}"
+                        art.data = albumArt.read()
+                        file.add_picture(art)
                     file.save()
                 print("Metadata saved")
                 try:
