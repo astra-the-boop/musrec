@@ -58,7 +58,7 @@ def recorder(recLen, fileType = "wav", sample_rate = 44100, channels = 2, blocks
         else:
             recordedChunks = []
             t.play()
-            print(f"Currently recording {t.getTitle()} by {t.getArtist()} with length of {t.getDuration()} seconds; Pause music to stop recording")
+            print(f"Currently recording {title} by {artist} with length of {t.getDuration()} seconds; Pause music to stop recording")
             with sd.InputStream(
                     samplerate=sample_rate,
                     channels=channels,
