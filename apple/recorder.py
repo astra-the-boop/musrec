@@ -12,6 +12,7 @@ import numpy as np
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3, APIC
 from mutagen.flac import FLAC, Picture
+from mutagen.oggvorbis import OggVorbis
 
 def recorder(recLen, fileType = "wav", sample_rate = 44100, channels = 2, blocksize = 1024, skipWarning = False, outputDir = "."):
     os.makedirs(outputDir, exist_ok = True)
@@ -122,6 +123,18 @@ def recorder(recLen, fileType = "wav", sample_rate = 44100, channels = 2, blocks
                     os.remove("cover.jpg")
                 except FileNotFoundError:
                     pass
+            elif fileType == "ogg":
+                subprocess.run(["ffmpeg", "-y", "-i", f"{outputDir}/{title} — {artist}.wav", "-codec:a", "libvorbis", "-qscale:a", "10", f"{outputDir}/{title} — {artist}.ogg"])
+                os.remove(f"{outputDir}/{title} — {artist}.wav")
+                print(f"Saved as '{title} — {artist}.ogg' in {outputDir}/. If audio is blank, check if 'BlackHole 2ch' or a multi-output device with it is being used for sound output in Audio MIDI Setup")
+                print("Writing metadata...")
+                file = OggVorbis(f"{outputDir}/{title} — {artist}.ogg")
+                file["title"] = title
+                file["artist"] = artist
+                file["album"] = album
+                file.save()
+                print("Metadata saved")
+
 
         else:
             print("Recording not saved due to user interrupt")
