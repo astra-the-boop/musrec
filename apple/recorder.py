@@ -14,7 +14,7 @@ from mutagen.id3 import ID3, APIC
 from mutagen.flac import FLAC, Picture
 from mutagen.oggvorbis import OggVorbis
 
-def recorder(recLen, fileType = "wav", sample_rate = 44100, channels = 2, blocksize = 1024, skipWarning = False, outputDir = "."):
+def recorder(recLen, fileType = "wav", sample_rate = 44100, channels = 2, blocksize = 1024, skipWarning = False, outputDir = ".", adSkip = True):
     os.makedirs(outputDir, exist_ok = True)
     def callback(indata, frames, time, status):
         if status:
@@ -51,91 +51,94 @@ def recorder(recLen, fileType = "wav", sample_rate = 44100, channels = 2, blocks
         title = t.getTitle()
         artist = t.getArtist()
         album = t.getAlbum()
-        recordedChunks = []
-        t.play()
-        print(f"Currently recording {t.getTitle()} by {t.getArtist()} with length of {t.getDuration()} seconds; Pause music to stop recording")
-        with sd.InputStream(
-                samplerate=sample_rate,
-                channels=channels,
-                callback=callback,
-                blocksize=blocksize,
-            device=device_index,
-            dtype='float32'
-        ):
-            start_time = time.time()
-            time.sleep(1)
-            while t.isPlaying() and (time.time() - start_time) < duration:
-                time.sleep(0.1)
-            print("Recording stopped")
-        interrupted = t.isPlaying() == False and (time.time() - start_time) < duration
-
-        audio = np.concatenate(recordedChunks, axis=0)
-        if not interrupted:
-            sf.write(f"{outputDir}/{title} — {artist}.wav", audio, sample_rate)
-            if fileType == "wav":
-                print(f"Saved as '{title} — {artist}.wav' in {outputDir}/. If audio is blank, check if 'BlackHole 2ch' or a multi-output device with it is being used for sound output in Audio MIDI Setup")
-            elif fileType == "mp3":
-                subprocess.run(["ffmpeg", "-y", "-i", f"{outputDir}/{title} — {artist}.wav", "-codec:a", "libmp3lame", "-qscale:a", "0", f"{outputDir}/{title} — {artist}.mp3"])
-                os.remove(f"{outputDir}/{title} — {artist}.wav")
-                print(f"Saved as '{title} — {artist}.mp3' in {outputDir}/. If audio is blank, check if 'BlackHole 2ch' or a multi-output device with it is being used for sound output in Audio MIDI Setup")
-                print("Writing metadata...")
-                file = EasyID3(f"{outputDir}/{title} — {artist}.mp3")
-                file["title"] = title
-                file["artist"] = artist
-                file["album"] = album
-                file.save()
-                file = ID3(f"{outputDir}/{title} — {artist}.mp3")
-                if t.fetchAlbumCover(title, artist, album, "cover.jpg") != None:
-                    with open("cover.jpg", "rb") as albumArt:
-                        file.add(APIC(
-                            encoding=3,
-                            mime='image/jpeg',
-                            type=3,
-                            desc=f"Cover of {title} — {artist}",
-                            data=albumArt.read()
-                        ))
-                    file.save()
-                print("Metadata saved")
-                try:
-                    os.remove("cover.jpg")
-                except FileNotFoundError:
-                    pass
-            elif fileType == "flac":
-                subprocess.run(["ffmpeg", "-y", "-i", f"{outputDir}/{title} — {artist}.wav", "-codec:a", "flac", f"{outputDir}/{title} — {artist}.flac"])
-                os.remove(f"{outputDir}/{title} — {artist}.wav")
-                print(f"Saved as '{title} — {artist}.flac' in {outputDir}/. If audio is blank, check if 'BlackHole 2ch' or a multi-output device with it is being used for sound output in Audio MIDI Setup")
-                print("Writing metadata...")
-                file = FLAC(f"{outputDir}/{title} — {artist}.flac")
-                file["title"] = title
-                file["artist"] = artist
-                file["album"] = album
-                if t.fetchAlbumCover(title, artist, album, "cover.jpg") != None:
-                    with open("cover.jpg", "rb") as albumArt:
-                        art = Picture()
-                        art.type = 3
-                        art.mime = "image/jpeg"
-                        art.desc = "Cover of {title} — {artist}"
-                        art.data = albumArt.read()
-                        file.add_picture(art)
-                    file.save()
-                print("Metadata saved")
-                try:
-                    os.remove("cover.jpg")
-                except FileNotFoundError:
-                    pass
-            elif fileType == "ogg":
-                subprocess.run(["ffmpeg", "-y", "-i", f"{outputDir}/{title} — {artist}.wav", "-codec:a", "libvorbis", "-qscale:a", "10", f"{outputDir}/{title} — {artist}.ogg"])
-                os.remove(f"{outputDir}/{title} — {artist}.wav")
-                print(f"Saved as '{title} — {artist}.ogg' in {outputDir}/. If audio is blank, check if 'BlackHole 2ch' or a multi-output device with it is being used for sound output in Audio MIDI Setup")
-                print("Writing metadata...")
-                file = OggVorbis(f"{outputDir}/{title} — {artist}.ogg")
-                file["title"] = title
-                file["artist"] = artist
-                file["album"] = album
-                file.save()
-                print("Metadata saved")
-
-
+        if t.adLikely() and adSkip:
+            t.play()
+            print("Advertisement likely, skipping recording for track")
+            time.sleep(t.getDuration())
         else:
-            print("Recording not saved due to user interrupt")
-            break
+            recordedChunks = []
+            t.play()
+            print(f"Currently recording {t.getTitle()} by {t.getArtist()} with length of {t.getDuration()} seconds; Pause music to stop recording")
+            with sd.InputStream(
+                    samplerate=sample_rate,
+                    channels=channels,
+                    callback=callback,
+                    blocksize=blocksize,
+                device=device_index,
+                dtype='float32'
+            ):
+                start_time = time.time()
+                time.sleep(1)
+                while t.isPlaying() and (time.time() - start_time) < duration:
+                    time.sleep(0.1)
+                print("Recording stopped")
+            interrupted = t.isPlaying() == False and (time.time() - start_time) < duration
+
+            audio = np.concatenate(recordedChunks, axis=0)
+            if not interrupted:
+                sf.write(f"{outputDir}/{title} — {artist}.wav", audio, sample_rate)
+                if fileType == "wav":
+                    print(f"Saved as '{title} — {artist}.wav' in {outputDir}/. If audio is blank, check if 'BlackHole 2ch' or a multi-output device with it is being used for sound output in Audio MIDI Setup")
+                elif fileType == "mp3":
+                    subprocess.run(["ffmpeg", "-y", "-i", f"{outputDir}/{title} — {artist}.wav", "-codec:a", "libmp3lame", "-qscale:a", "0", f"{outputDir}/{title} — {artist}.mp3"])
+                    os.remove(f"{outputDir}/{title} — {artist}.wav")
+                    print(f"Saved as '{title} — {artist}.mp3' in {outputDir}/. If audio is blank, check if 'BlackHole 2ch' or a multi-output device with it is being used for sound output in Audio MIDI Setup")
+                    print("Writing metadata...")
+                    file = EasyID3(f"{outputDir}/{title} — {artist}.mp3")
+                    file["title"] = title
+                    file["artist"] = artist
+                    file["album"] = album
+                    file.save()
+                    file = ID3(f"{outputDir}/{title} — {artist}.mp3")
+                    if t.fetchAlbumCover(title, artist, album, "cover.jpg") != None:
+                        with open("cover.jpg", "rb") as albumArt:
+                            file.add(APIC(
+                                encoding=3,
+                                mime='image/jpeg',
+                                type=3,
+                                desc=f"Cover of {title} — {artist}",
+                                data=albumArt.read()
+                            ))
+                        file.save()
+                    print("Metadata saved")
+                    try:
+                        os.remove("cover.jpg")
+                    except FileNotFoundError:
+                        pass
+                elif fileType == "flac":
+                    subprocess.run(["ffmpeg", "-y", "-i", f"{outputDir}/{title} — {artist}.wav", "-codec:a", "flac", f"{outputDir}/{title} — {artist}.flac"])
+                    os.remove(f"{outputDir}/{title} — {artist}.wav")
+                    print(f"Saved as '{title} — {artist}.flac' in {outputDir}/. If audio is blank, check if 'BlackHole 2ch' or a multi-output device with it is being used for sound output in Audio MIDI Setup")
+                    print("Writing metadata...")
+                    file = FLAC(f"{outputDir}/{title} — {artist}.flac")
+                    file["title"] = title
+                    file["artist"] = artist
+                    file["album"] = album
+                    if t.fetchAlbumCover(title, artist, album, "cover.jpg") != None:
+                        with open("cover.jpg", "rb") as albumArt:
+                            art = Picture()
+                            art.type = 3
+                            art.mime = "image/jpeg"
+                            art.desc = f"Cover of {title} — {artist}"
+                            art.data = albumArt.read()
+                            file.add_picture(art)
+                        file.save()
+                    print("Metadata saved")
+                    try:
+                        os.remove("cover.jpg")
+                    except FileNotFoundError:
+                        pass
+                elif fileType == "ogg":
+                    subprocess.run(["ffmpeg", "-y", "-i", f"{outputDir}/{title} — {artist}.wav", "-codec:a", "libvorbis", "-qscale:a", "10", f"{outputDir}/{title} — {artist}.ogg"])
+                    os.remove(f"{outputDir}/{title} — {artist}.wav")
+                    print(f"Saved as '{title} — {artist}.ogg' in {outputDir}/. If audio is blank, check if 'BlackHole 2ch' or a multi-output device with it is being used for sound output in Audio MIDI Setup")
+                    print("Writing metadata...")
+                    file = OggVorbis(f"{outputDir}/{title} — {artist}.ogg")
+                    file["title"] = title
+                    file["artist"] = artist
+                    file["album"] = album
+                    file.save()
+                    print("Metadata saved")
+            else:
+                print("Recording not saved due to user interrupt")
+                break

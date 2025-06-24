@@ -67,3 +67,14 @@ def fetchAlbumCover(title, artist, album, saveAs="cover.jpg"):
     with open(saveAs, "wb") as f:
         f.write(imgData)
     return saveAs
+
+def adLikely(): #idfk anymore i hate spotify so much why isn't this consistent
+    #these are just red flags, idk... i'll prolly add a thing to skip ad-ignoring later :P
+    if getTitle().strip() == "" or getArtist().strip() == "":
+        return True
+    elif getTitle().strip() == "" and getArtist().strip().lower() in ["advertisement", "spotify"] or getArtist().strip() == "" and getTitle().strip().lower() in ["advertisement", "spotify"]:
+        return True
+    elif getAlbum().strip() == "" and getTitle().strip() == "" and getDuration() <= 30:
+        return True
+    else:
+        return False

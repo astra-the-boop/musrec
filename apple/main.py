@@ -24,6 +24,9 @@ def main():
     parser.add_argument(
         "--outputdir", "-o", default=".", help="Output directory (default: .)."
     )
+    parser.add_argument(
+        "--disableadskip", "-da", default=True, action="store_false", help="Disables skipping recording ads (default: False)."
+    )
 
     args = parser.parse_args()
     recorder(
@@ -33,7 +36,8 @@ def main():
         args.channels,
         args.blocksize,
         args.force,
-        args.outputdir
+        args.outputdir,
+        args.disableadskip
     )
 
 
