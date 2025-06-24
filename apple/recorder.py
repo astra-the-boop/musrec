@@ -11,7 +11,8 @@ import numpy as np
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3, APIC
 
-def recorder(recLen, fileType = "wav", sample_rate = 44100, channels = 2, blocksize = 1024):
+def recorder(recLen, fileType = "wav", sample_rate = 44100, channels = 2, blocksize = 1024, skipWarning = False, outputDir = "."):
+    os.makedirs(outputDir, exist_ok = True)
     def callback(indata, frames, time, status):
         if status:
             print(status)
@@ -29,9 +30,9 @@ def recorder(recLen, fileType = "wav", sample_rate = 44100, channels = 2, blocks
         If it is installed then check if the name of the audio device is 'BlackHole 2ch' in Audio MIDI Setup and is being used as device output.
     
         If you're not on a Mac device, please use the other version of this app""")
-
-    if not ("BlackHole" in subprocess.check_output(["SwitchAudioSource","-t","output","-c"], text=True).strip() or "Multi-Output" in subprocess.check_output(["SwitchAudioSource","-t","output","-c"], text=True).strip()):
-        raise RuntimeError("Interrupted — Check in System Settings > Sound > Output if BlackHole is selected") if input("BlackHole or a Multi-Output Device isn't detected as output device, enter [c] to cancel") == "c" else print("WARNING: BlackHole or a Multi-Output Device isn't detected as output device, audio file may return empty")
+    if not skipWarning:
+        if not ("BlackHole" in subprocess.check_output(["SwitchAudioSource","-t","output","-c"], text=True).strip() or "Multi-Output" in subprocess.check_output(["SwitchAudioSource","-t","output","-c"], text=True).strip()):
+            raise RuntimeError("Interrupted — Check in System Settings > Sound > Output if BlackHole is selected") if input("BlackHole or a Multi-Output Device isn't detected as output device, enter [c] to cancel") == "c" else print("WARNING: BlackHole or a Multi-Output Device isn't detected as output device, audio file may return empty")
     print(f"Using device index: {device_index}")
 
 
@@ -67,20 +68,20 @@ def recorder(recLen, fileType = "wav", sample_rate = 44100, channels = 2, blocks
 
         audio = np.concatenate(recordedChunks, axis=0)
         if not interrupted:
-            sf.write(f"{title} — {artist}.wav", audio, sample_rate)
+            sf.write(f"{outputDir}/{title} — {artist}.wav", audio, sample_rate)
             if fileType == "wav":
-                print(f"Saved as '{title} — {artist}.wav'. If audio is blank, check if 'BlackHole 2ch' or a multi-output device with it is being used for sound output in Audio MIDI Setup")
+                print(f"Saved as '{title} — {artist}.wav' in {outputDir}/. If audio is blank, check if 'BlackHole 2ch' or a multi-output device with it is being used for sound output in Audio MIDI Setup")
             else:
-                subprocess.run(["ffmpeg", "-y", "-i", f"{title} — {artist}.wav", "-codec:a", "libmp3lame", "-qscale:a", "0", f"{title} — {artist}.mp3"])
-                os.remove(f"{title} — {artist}.wav")
-                print(f"Saved as '{title} — {artist}.mp3'. If audio is blank, check if 'BlackHole 2ch' or a multi-output device with it is being used for sound output in Audio MIDI Setup")
+                subprocess.run(["ffmpeg", "-y", "-i", f"{outputDir}/{title} — {artist}.wav", "-codec:a", "libmp3lame", "-qscale:a", "0", f"{outputDir}/{title} — {artist}.mp3"])
+                os.remove(f"{outputDir}/{title} — {artist}.wav")
+                print(f"Saved as '{title} — {artist}.mp3' in {outputDir}/. If audio is blank, check if 'BlackHole 2ch' or a multi-output device with it is being used for sound output in Audio MIDI Setup")
                 print("Writing metadata...")
-                file = EasyID3(f"{title} — {artist}.mp3")
+                file = EasyID3(f"{outputDir}/{title} — {artist}.mp3")
                 file["title"] = title
                 file["artist"] = artist
                 file["album"] = album
                 file.save()
-                file = ID3(f"{title} — {artist}.mp3")
+                file = ID3(f"{outputDir}/{title} — {artist}.mp3")
                 if t.fetchAlbumCover(title, artist, album, "cover.jpg") != None:
                     with open("cover.jpg", "rb") as albumArt:
                         file.add(APIC(

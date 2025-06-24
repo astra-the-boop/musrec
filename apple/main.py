@@ -18,6 +18,12 @@ def main():
     parser.add_argument(
         "--blocksize", "-b", default=1024, type=int, help="Block size (default: 1024)."
     )
+    parser.add_argument(
+        "--skipwarning", "-sw", default=False, action="store_true", help="Skip warnings (default: False)."
+    )
+    parser.add_argument(
+        "--outputdir", "-o", default=".", help="Output directory (default: .)."
+    )
 
     args = parser.parse_args()
     recorder(
@@ -25,7 +31,9 @@ def main():
         args.format,
         args.samplerate,
         args.channels,
-        args.blocksize
+        args.blocksize,
+        args.skipwarning,
+        args.outputdir
     )
 
 
