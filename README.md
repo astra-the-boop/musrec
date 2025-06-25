@@ -85,4 +85,29 @@ If you want to change the default values, you can use `config`!
 
 `musrec config ...`
 - `--set key=value`: Sets a value
-- 
+- `--show`: Shows current configuration
+- `--reset`: Resets to original default config
+
+Example:
+```shell
+musrec --set trackCount=100
+```
+
+Value list:
+```shell
+    "outputFormat":"wav",
+    "sampleRate":16000,
+    "channels":2,
+    "blockSize":1024,
+    "adSkip":1,
+    "outputDir":".",
+    "trackCount":10,
+    "service":"spotify",
+    "bitrate":"320k"
+```
+
+---
+
+## Note:
+
+### Audio Output must be set to BlackHole or a Multi-output device with BlackHole

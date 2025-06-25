@@ -1,0 +1,32 @@
+name: publish to pypi
+
+on:
+  push:
+    tags:
+      - 'v.1.0.0'
+jobs:
+  build:
+    name: build and publish to pypi
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: set up python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: install build tools
+        run: python -m pip install build
+
+      - name: build pkg
+        run: python -m pip install build
+
+      - name: publish pypi
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}

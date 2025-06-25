@@ -6,7 +6,7 @@ defaultConfig = {
     "sampleRate":16000,
     "channels":2,
     "blockSize":1024,
-    "adSkip":True,
+    "adSkip":1,
     "outputDir":".",
     "trackCount":10,
     "service":"spotify",
