@@ -1,0 +1,11 @@
+{
+    "outputFormat":"wav",
+    "sampleRate":16000,
+    "channels":2,
+    "blockSize":1024,
+    "adSkip": 1,
+    "outputDir":".",
+    "trackCount": 10,
+    "service": "spotify",
+    "bitrate": "320k"
+}

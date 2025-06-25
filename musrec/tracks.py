@@ -1,57 +1,69 @@
 import subprocess
 import requests
 
-def getDuration():
-    return float(subprocess.check_output([
-        "osascript", "-e", "tell application \"Spotify\" to get duration of current track"
-    ]).strip())/1000
+def getService(service):
+    if service == "spotify":
+        return "Spotify"
+    else:
+        return "Music"
 
-def getPosition():
+def getDuration(service):
+    if service == "spotify":
+        return float(subprocess.check_output([
+            f"osascript", "-e", f"tell application \"Spotify\" to get duration of current track"
+        ]).strip()) / 1000
+    else:
+        return float(subprocess.check_output([
+            f"osascript", "-e", f"tell application \"Music\" to get duration of current track"
+        ]).strip())
+
+
+def getPosition(service):
     return float(subprocess.check_output([
-        "osascript", "-e", "tell application \"Spotify\" to get player position"
+        f"osascript", "-e", f"tell application \"{getService(service)}\" to get player position"
     ]).strip())
 
 
-def setPlayerPos(position):
+def setPlayerPos(position, service):
     subprocess.run([
-        "osascript", "-e", f"tell application \"Spotify\" to set player position to {position}",
+        f"osascript", "-e", f"tell application \"{getService(service)}\" to set player position to {position}",
     ])
 
-def pause():
+def pause(service):
     subprocess.run([
-        "osascript", "-e", "tell application \"Spotify\" to pause"
+        f"osascript", "-e", f"tell application \"{getService(service)}\" to pause"
     ])
 
-def play():
+def play(service):
     subprocess.run([
-        "osascript", "-e", "tell application \"Spotify\" to play"
+        f"osascript", "-e", f"tell application \"{getService(service)}\" to play"
     ])
 
-def getTitle():
+def getTitle(service):
     try:
         return subprocess.check_output([
-            "osascript", "-e", "tell application \"Spotify\" to get name of current track"
+            f"osascript", "-e", f"tell application \"{getService(service)}\" to get name of current track"
         ]).decode().strip()
     except:
         return None
 
-def getArtist():
+def getArtist(service):
     try:
         return subprocess.check_output([
-            "osascript", "-e", "tell application \"Spotify\" to get artist of current track"
+            f"osascript", "-e", f"tell application \"{getService(service)}\" to get artist of current track"
         ]).decode().strip()
     except:
         return None
 
-def getAlbum():
+def getAlbum(service):
     try:
-        return subprocess.check_output(["osascript", "-e", "tell application \"Spotify\"\nalbum of current track\nend tell"], text=True).strip()
+        return subprocess.check_output([f"osascript", "-e", f"tell application \"{getService(service)}\"\nalbum of current track\nend tell"], text=True).strip()
     except subprocess.CalledProcessError:
         return None
 
-def isPlaying():
+def isPlaying(service):
     try:
-        return True if subprocess.check_output(["osascript", "-e", "tell application \"Spotify\" to get player state"]).decode().strip() == "playing" else False
+        return True if subprocess.check_output([f"osascript", "-e", f"tell application \"{getService(service)}\" to get player state"]).decode().strip() == "playing" else False
     except subprocess.CalledProcessError:
         return False
 
@@ -68,13 +80,16 @@ def fetchAlbumCover(title, artist, album, saveAs="cover.jpg"):
         f.write(imgData)
     return saveAs
 
-def adLikely(): #idfk anymore i hate spotify so much why isn't this consistent
+def adLikely(service): #idfk anymore i hate spotify so much why isn't this consistent
     #these are just red flags, idk... i'll prolly add a thing to skip ad-ignoring later :P
-    if getTitle().strip() == "" or getArtist().strip() == "":
+    if getTitle(service).strip() == "" or getArtist(service).strip() == "":
         return True
-    elif getTitle().strip() == "" and getArtist().strip().lower() in ["advertisement", "spotify"] or getArtist().strip() == "" and getTitle().strip().lower() in ["advertisement", "spotify"]:
+    elif getTitle(service).strip() == "" and getArtist(service).strip().lower() in ["advertisement", "spotify"] or getArtist(service).strip() == "" and getTitle(service).strip().lower() in ["advertisement", "spotify"]:
         return True
-    elif getAlbum().strip() == "" and getTitle().strip() == "" and getDuration() <= 30:
+    elif getAlbum(service).strip() == "" and getTitle(service).strip() == "" and getDuration() <= 30:
         return True
     else:
         return False
+
+play("apple-music")
+print(getDuration("apple-music"))

@@ -26,7 +26,9 @@ def recorder(track_count,
              blocksize=1024,
              skipWarning=False,
              outputDir=".",
-             adSkip=True):
+             adSkip=True,
+             service="spotify",
+             bitrate="320k"):
     os.makedirs(outputDir, exist_ok=True)
 
     def callback(indata, frames, time, status):
@@ -63,24 +65,24 @@ def recorder(track_count,
 
     for i in range(int(track_count)):
         interrupted = False
-        t.pause()
-        duration = t.getDuration()
-        if t.getPosition() != 0:
-            t.setPlayerPos(0)
-        title = t.getTitle()
-        artist = t.getArtist()
-        album = t.getAlbum()
+        t.pause(service)
+        duration = t.getDuration(service)
+        if t.getPosition(service) != 0:
+            t.setPlayerPos(0, service)
+        title = t.getTitle(service)
+        artist = t.getArtist(service)
+        album = t.getAlbum(service)
 
-        while t.adLikely() and adSkip:
-            t.play()
+        while t.adLikely(service) and adSkip:
+            t.play(service)
             print("Advertisement likely, skipping recording for track")
-            sleep(t.getDuration())
+            sleep(t.getDuration(service))
 
         recordedChunks = []
-        t.play()
+        t.play(service)
 
         print(
-            f"Currently recording {title} by {artist} with length of {t.getDuration()} seconds; Pause music to stop recording"
+            f"({i}/{track_count}) Currently recording {title} by {artist} with length of {t.getDuration(service)} seconds; Pause music to stop recording"
         )
 
         with sd.InputStream(samplerate=sample_rate,
@@ -91,11 +93,11 @@ def recorder(track_count,
                             dtype='float32'):
             start_time = time()
             sleep(1)
-            while t.isPlaying() and (time() - start_time) < duration:
+            while t.isPlaying(service) and (time() - start_time) < duration:
                 sleep(0.1)
             print("Recording stopped")
 
-        interrupted = not t.isPlaying() and (time() - start_time) < duration
+        interrupted = not t.isPlaying(service) and (time() - start_time) < duration
 
         if interrupted:
             print("Recording not saved due to user interrupt")
@@ -117,7 +119,7 @@ def recorder(track_count,
         if fileType == "mp3":
             subprocess.run([
                 "ffmpeg", "-y", "-i", wav_file, "-codec:a", "libmp3lame",
-                "-qscale:a", "0", file_path
+                "-b:a", bitrate, file_path
             ])
             print(saved_as)
 
