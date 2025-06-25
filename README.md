@@ -45,12 +45,12 @@ brew install blackhole-2ch ffmpeg switchaudio-osx
 ```shell
 git clone https://github.com/astra-the-boop/musrec.git
 cd musrec
-pip install .
+pip3 install .
 ```
 
 #### Option 2: Via PyPI (CURRENTLY DOESN'T WORK AS OF JUN 25)
 ```shell
-pip install musrec
+pip3 install musrec
 ```
 
 ---
