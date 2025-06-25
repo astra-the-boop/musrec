@@ -48,7 +48,7 @@ cd musrec
 pip install .
 ```
 
-#### Option 2: Via PyPI
+#### Option 2: Via PyPI (CURRENTLY DOESN'T WORK AS OF JUN 25)
 ```shell
 pip install musrec
 ```
