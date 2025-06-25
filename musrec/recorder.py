@@ -17,6 +17,7 @@ from mutagen.easyid3 import EasyID3
 from mutagen.flac import FLAC, Picture
 from mutagen.id3 import APIC, ID3
 from mutagen.oggvorbis import OggVorbis
+from mutagen.mp4 import MP4, MP4Cover
 
 
 def recorder(track_count,
@@ -186,6 +187,24 @@ def recorder(track_count,
             file["album"] = album
             file.save()
 
+            print("Metadata saved")
+
+        if fileType == "m4a":
+            subprocess.run([
+                "ffmpeg", "-y", "-i", wav_file, "-c:a", "alac", file_path
+            ])
+            print(saved_as)
+            print("Writing metadata...")
+            file = MP4(file_path)
+            file["\xa9nam"] = title
+            file["\xa9ART"] = artist
+            file["\xa9alb"] = album
+
+            if t.fetchAlbumCover(title, artist, album, "cover.jpg") != None:
+                with open("cover.jpg", "rb") as albumArt:
+                    file["covr"] = [MP4Cover(albumArt.read(),imageformat=MP4Cover.FORMAT_JPEG)]
+
+            file.save()
             print("Metadata saved")
 
         if fileType != "wav":

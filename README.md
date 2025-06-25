@@ -1,13 +1,13 @@
 # MusRec - Records and exports music with automatic metadata tagging
 ## Overview / Description
 
-MusRec is a CLI tool designed to capture music _(currently supporting Spotify and Apple Music)_, exporting to **MP3, FLAC, OGG, or WAV** with automatic metadata tagging.
+MusRec is a CLI tool designed to capture music _(currently supporting Spotify and Apple Music)_, exporting to **MP3, FLAC, OGG, ALAC (m4a), or WAV** with automatic metadata tagging.
 
 ---
 
 # Features
 - Audio recording and exporting
-- Supports: `.wav`, `.mp3`, `.flac`, `.ogg`
+- Supports: `.wav`, `.mp3`, `.flac`, `.ogg`, `.m4a (ALAC)`
 - Automatic metadata tagging (Artist, Album, Cover art, etc...)
 - Automatic ad-ignoring (Spotify)
 
