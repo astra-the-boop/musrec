@@ -116,3 +116,13 @@ Value list:
 ## Note:
 
 ### Audio Output must be set to BlackHole or a Multi-output device with BlackHole
+
+After installing BlackHole, go into `System Settings > Sound > Output` and change the output to BlackHole
+
+<img src="media/blackhole1.gif">
+
+If you want to listen to your music / audio while recording, you can create a Multi-Output Device with both BlackHole and your speaker in `Audio MIDI Setup` and setting your audio output to that
+
+<img src="media/blackhole2.gif">
+
+<img src="media/blackhole3.png">
