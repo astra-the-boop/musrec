@@ -126,3 +126,8 @@ If you want to listen to your music / audio while recording, you can create a Mu
 <img src="media/blackhole2.gif">
 
 <img src="media/blackhole3.png">
+
+---
+
+## Demo
+[Demo Video — Spotify](https://youtu.be/P_YUd3iGAog)
