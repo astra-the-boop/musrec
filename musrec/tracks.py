@@ -90,6 +90,3 @@ def adLikely(service): #idfk anymore i hate spotify so much why isn't this consi
         return True
     else:
         return False
-
-play("apple-music")
-print(getDuration("apple-music"))

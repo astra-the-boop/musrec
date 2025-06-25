@@ -1,6 +1,88 @@
-# MusRec - Records and exports music while it plays with automatic metadata tagging
+# MusRec - Records and exports music with automatic metadata tagging
 ## Overview / Description
 
-CLI tool to record 
-- Automatically records and exports played music to: .wav, .mp3
+MusRec is a CLI tool designed to capture music _(currently supporting Spotify and Apple Music)_, exporting to **MP3, FLAC, OGG, or WAV** with automatic metadata tagging.
+
+---
+
+# Features
+- Audio recording and exporting
+- Supports: `.wav`, `.mp3`, `.flac`, `.ogg`
+- Automatic metadata tagging (Artist, Album, Cover art, etc...)
+- Automatic ad-ignoring (Spotify)
+
+---
+
+# Installation and requirements
+
+## Requirements
+- Currently only supports macOS (we're working on porting to Linux soon enough, if you're on Windows, I recommend looking into Spytify)
+- [BlackHole](https://github.com/ExistentialAudio/BlackHole) installed and set as output device
+- `ffmpeg` and `switchaudio-osx` installed: `brew install blackhole-2ch ffmpeg switchaudio-osx`
+
+---
+
+## Installation
+### !!! IMPORTANT: YOU NEED TO INSTALL THE NON-PYTHON DEPENDENCIES FIRST !!!
+- **[BlackHole](https://github.com/ExistentialAudio/BlackHole)**
+- **[ffmpeg](https://ffmpeg.org/)**
+- **[SwitchAudio](https://github.com/deweller/switchaudio-osx)**
+
+If you haven't already, install **Homebrew** first!
+```shell
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+Then, install the three non-Python dependencies by running the following command!
+
+```shell
+brew install blackhole-2ch ffmpeg switchaudio-osx
+```
+
+**Afterwards, you can continue with regular installation!**
+
+#### Option 1: From source code
+```shell
+git clone https://github.com/astra-the-boop/musrec.git
+cd musrec
+pip install .
+```
+
+#### Option 2: Via PyPI
+```shell
+pip install musrec
+```
+
+---
+
+## User Guide
+
+### Recording music:
+
+Make sure you have the official Spotify or (Apple) Music app installed and ready to play!
+
+`musrec record ...`
+
+- `-f` / `--format`: Output format _(`wav`, `mp3`, `flac`, `ogg`)_
+- `-tc` / `--trackcount`: Number of tracks you want to record
+- `-s` / `--service`: Which streaming service you're using _(default: Spotify)_
+- `-o` / `--outputdir`: The directory you're exporting music to _(e.g.: `"~/music export"`)_
+- `-da` / `--disableadskip`: Disables automatic ad-skipping. Useful when our automatic detector isn't cutting it or if you want to record the ads for some reason.
+- `-br` / `--bitrate`: Sets the bitrate for the `.mp3` export if you're exporting to `.mp3`
+- `-fr` / `--force`: Skips warnings in case if our audio loopback detectors aren't working as intended
+- `-b` / `--blocksize`: Sets the block-size
+- `-sr` / `--samplerate`: Sets the sample rate
+
+If you don't use any of these, they will use the default values. You can check by running `musrec --help`
+
+Example:
+```shell
+musrec record -f flac -tc 50 -s apple-music -o "~/Desktop/music export"
+```
+
+### Configuration
+If you want to change the default values, you can use `config`!
+
+`musrec config ...`
+- `--set key=value`: Sets a value
 - 
