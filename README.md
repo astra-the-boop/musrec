@@ -77,7 +77,7 @@ If you don't use any of these, they will use the default values. You can check b
 
 Example:
 ```shell
-musrec record -f flac -tc 50 -s apple-music -o "~/Desktop/music export"
+musrec record -f flac -tc 50 -s apple-music -o ~/Desktop/"music export"
 ```
 
 ### Configuration
