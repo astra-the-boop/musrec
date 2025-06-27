@@ -12,31 +12,31 @@ def main():
         "--format", "-f", choices = ["wav", "mp3", "flac", "ogg", "m4a"], default=load()["outputFormat"], help=f"Output file format; (default: .{load()['outputFormat']}) (supported: .wav (automatic metadata not supported), .mp3, .flac, .ogg (no album art), .m4a (ALAC))."
     )
     recParser.add_argument(
-        "--trackcount", "-tc", default=load()["trackCount"], type=int, help=f"Number of tracks to record (default: {load()["trackCount"]})."
+        "--trackcount", "-tc", default=load()["trackCount"], type=int, help=f"Number of tracks to record (default: {load()['trackCount']})."
     )
     recParser.add_argument(
-        "--samplerate", "-sr", default=load()["sampleRate"], type=int, help=f"Sampling rate (default: {load()["sampleRate"]})."
+        "--samplerate", "-sr", default=load()["sampleRate"], type=int, help=f"Sampling rate (default: {load()['sampleRate']})."
     )
     recParser.add_argument(
-        "--channels", "-c", default=load()["channels"], type=int, help=f"Number of audio channels (default: {load()["channels"]})."
+        "--channels", "-c", default=load()["channels"], type=int, help=f"Number of audio channels (default: {load()['channels']})."
     )
     recParser.add_argument(
-        "--blocksize", "-b", default=load()["blockSize"], type=int, help=f"Block size (default: {load()["blockSize"]})."
+        "--blocksize", "-b", default=load()["blockSize"], type=int, help=f"Block size (default: {load()['blockSize']})."
     )
     recParser.add_argument(
         "--force", "-fr", default=False, action="store_true", help="Skip warnings (default: False)."
     )
     recParser.add_argument(
-        "--outputdir", "-o", default=load()["outputDir"], help=f"Output directory (default: {load()["outputDir"]})."
+        "--outputdir", "-o", default=load()["outputDir"], help=f"Output directory (default: {load()['outputDir']})."
     )
     recParser.add_argument(
-        "--disableadskip", "-da", default=bool(load()["adSkip"]), action="store_false", help=f"Disables skipping recording ads (default: {load()["adSkip"]} - 0: false, 1: true)."
+        "--disableadskip", "-da", default=bool(load()["adSkip"]), action="store_false", help=f"Disables skipping recording ads (default: {load()['adSkip']} - 0: false, 1: true)."
     )
     recParser.add_argument(
-        "--service", "-s", choices=["spotify", "apple-music"], default=load()["service"], help=f"Streaming service used (default: {load()["service"]})."
+        "--service", "-s", choices=["spotify", "apple-music"], default=load()["service"], help=f"Streaming service used (default: {load()['service']})."
     )
     recParser.add_argument(
-        "--bitrate", "-br", choices=["32k", "64k", "96k", "128k", "160k", "192k", "224k", "256k", "320k"], default=load()["bitrate"], help=f"MP3 export bitrate (default: {load()["bitrate"]})."
+        "--bitrate", "-br", choices=["32k", "64k", "96k", "128k", "160k", "192k", "224k", "256k", "320k"], default=load()['bitrate'], help=f"MP3 export bitrate (default: {load()['bitrate']})."
     )
 
     #config
