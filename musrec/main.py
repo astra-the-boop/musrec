@@ -9,7 +9,7 @@ def main():
     #record
     recParser = subparsers.add_parser('record', help='Records music and exports them to audio files automatically.')
     recParser.add_argument(
-        "--format", "-f", choices = ["wav", "mp3", "flac", "ogg", "m4a"], default=load()["outputFormat"], help=f"Output file format; (default: .{load()["outputFormat"]}) (supported: .wav (automatic metadata not supported), .mp3, .flac, .ogg (no album art), .m4a (ALAC))."
+        "--format", "-f", choices = ["wav", "mp3", "flac", "ogg", "m4a"], default=load()["outputFormat"], help=f"Output file format; (default: .{load()['outputFormat']}) (supported: .wav (automatic metadata not supported), .mp3, .flac, .ogg (no album art), .m4a (ALAC))."
     )
     recParser.add_argument(
         "--trackcount", "-tc", default=load()["trackCount"], type=int, help=f"Number of tracks to record (default: {load()["trackCount"]})."
