@@ -17,7 +17,8 @@ dependencies = [
     "numpy",
     "sounddevice",
     "soundfile",
-    "mutagen"
+    "mutagen",
+    "requests"
 ]
 
 [project.scripts]
