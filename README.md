@@ -51,6 +51,7 @@ pip install --upgrade pip
 pip install .
 chmod +x .venv/bin/musrec
 sudo ln -sf "$PWD/.venv/bin/musrec" /usr/local/bin/musrec
+pip install --force-reinstall .
 ```
 
 #### Option 2: Via PyPI (CURRENTLY DOESN'T WORK AS OF JUN 25)
