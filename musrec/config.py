@@ -10,7 +10,8 @@ defaultConfig = {
     "outputDir":".",
     "trackCount":10,
     "service":"spotify",
-    "bitrate":"320k"
+    "bitrate":"320k",
+    "debug": 0
 }
 
 def checkDir():
