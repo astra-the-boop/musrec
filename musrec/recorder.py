@@ -121,7 +121,7 @@ def recorder(track_count,
             subprocess.run([
                 "ffmpeg", "-y", "-i", wav_file, "-codec:a", "libmp3lame",
                 "-b:a", bitrate, file_path
-            ])
+            ],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
             print(saved_as)
 
             print("Writing metadata...")
@@ -152,7 +152,7 @@ def recorder(track_count,
         if fileType == "flac":
             subprocess.run([
                 "ffmpeg", "-y", "-i", wav_file, "-codec:a", "flac", file_path
-            ])
+            ],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
             print(saved_as)
 
             print("Writing metadata...")
@@ -177,7 +177,7 @@ def recorder(track_count,
             subprocess.run([
                 "ffmpeg", "-y", "-i", wav_file, "-codec:a", "libvorbis",
                 "-qscale:a", "10", file_path
-            ])
+            ],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
             print(saved_as)
 
             print("Writing metadata...")
@@ -192,7 +192,7 @@ def recorder(track_count,
         if fileType == "m4a":
             subprocess.run([
                 "ffmpeg", "-y", "-i", wav_file, "-c:a", "alac", file_path
-            ])
+            ],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
             print(saved_as)
             print("Writing metadata...")
             file = MP4(file_path)
