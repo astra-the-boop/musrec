@@ -8,6 +8,7 @@ import subprocess
 import sys
 import shutil
 from time import sleep, time
+from tqdm import tqdm
 
 import numpy as np
 import sounddevice as sd
@@ -93,9 +94,16 @@ def recorder(track_count,
                             device=device_index,
                             dtype='float32'):
             start_time = time()
+            pbar = tqdm(total=int(duration), desc=f"{title} — {artist}", unit="sec")
             sleep(1)
+            last = 0
             while t.isPlaying(service) and (time() - start_time) < duration:
+                elapsed = int(time() - start_time)
+                if int(elapsed) > last:
+                    pbar.update(int(elapsed) - last)
+                    last = int(elapsed)
                 sleep(0.1)
+            pbar.close()
             print("Recording stopped")
 
         interrupted = not t.isPlaying(service) and (time() - start_time) < duration

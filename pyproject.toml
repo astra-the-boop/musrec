@@ -18,7 +18,8 @@ dependencies = [
     "sounddevice",
     "soundfile",
     "mutagen",
-    "requests"
+    "requests",
+    "tqdm"
 ]
 
 [project.scripts]

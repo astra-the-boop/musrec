@@ -10,6 +10,7 @@ MusRec is a CLI tool designed to capture music _(currently supporting Spotify an
 - Supports: `.wav`, `.mp3`, `.flac`, `.ogg`, `.m4a (ALAC)`
 - Automatic metadata tagging (Artist, Album, Cover art, etc...)
 - Automatic ad-ignoring (Spotify)
+- Progress bar!! :D
 
 ---
 
