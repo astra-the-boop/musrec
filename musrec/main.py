@@ -38,6 +38,9 @@ def main():
     recParser.add_argument(
         "--bitrate", "-br", choices=["32k", "64k", "96k", "128k", "160k", "192k", "224k", "256k", "320k"], default=load()['bitrate'], help=f"MP3 export bitrate (default: {load()['bitrate']})."
     )
+    recParser.add_argument(
+        "--debug", "-d", default=bool(load()["debug"]), action="store_true", help=f"Shows ffmpeg terminal output (default: {load()['debug']})."
+    )
 
     #config
     confParser = subparsers.add_parser('config', help='Configure default settings.')
@@ -82,7 +85,8 @@ def main():
             args.outputdir,
             args.disableadskip,
             args.service,
-            args.bitrate
+            args.bitrate,
+            args.debug
         )
 
 if __name__ == '__main__':

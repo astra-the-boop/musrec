@@ -30,7 +30,8 @@ def recorder(track_count,
              outputDir=".",
              adSkip=True,
              service="spotify",
-             bitrate="320k"):
+             bitrate="320k",
+             config=False):
     os.makedirs(outputDir, exist_ok=True)
 
     def callback(indata, frames, time, status):
@@ -126,10 +127,16 @@ def recorder(track_count,
             print(saved_as)
 
         if fileType == "mp3":
-            subprocess.run([
-                "ffmpeg", "-y", "-i", wav_file, "-codec:a", "libmp3lame",
-                "-b:a", bitrate, file_path
-            ],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+            if not config:
+                subprocess.run([
+                    "ffmpeg", "-y", "-i", wav_file, "-codec:a", "libmp3lame",
+                    "-b:a", bitrate, file_path
+                ],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+            else:
+                subprocess.run([
+                    "ffmpeg", "-y", "-i", wav_file, "-codec:a", "libmp3lame",
+                    "-b:a", bitrate, file_path
+                ])
             print(saved_as)
 
             print("Writing metadata...")
@@ -158,9 +165,14 @@ def recorder(track_count,
                 pass
 
         if fileType == "flac":
-            subprocess.run([
-                "ffmpeg", "-y", "-i", wav_file, "-codec:a", "flac", file_path
-            ],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+            if not config:
+                subprocess.run([
+                    "ffmpeg", "-y", "-i", wav_file, "-codec:a", "flac", file_path
+                ],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+            else:
+                subprocess.run([
+                    "ffmpeg", "-y", "-i", wav_file, "-codec:a", "flac", file_path
+                ])
             print(saved_as)
 
             print("Writing metadata...")
@@ -182,10 +194,16 @@ def recorder(track_count,
             print("Metadata saved")
 
         if fileType == "ogg":
-            subprocess.run([
-                "ffmpeg", "-y", "-i", wav_file, "-codec:a", "libvorbis",
-                "-qscale:a", "10", file_path
-            ],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+            if not config:
+                subprocess.run([
+                    "ffmpeg", "-y", "-i", wav_file, "-codec:a", "libvorbis",
+                    "-qscale:a", "10", file_path
+                ],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+            else:
+                subprocess.run([
+                    "ffmpeg", "-y", "-i", wav_file, "-codec:a", "libvorbis",
+                    "-qscale:a", "10", file_path
+                ])
             print(saved_as)
 
             print("Writing metadata...")
@@ -198,9 +216,14 @@ def recorder(track_count,
             print("Metadata saved")
 
         if fileType == "m4a":
-            subprocess.run([
-                "ffmpeg", "-y", "-i", wav_file, "-c:a", "alac", file_path
-            ],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+            if not config:
+                subprocess.run([
+                    "ffmpeg", "-y", "-i", wav_file, "-c:a", "alac", file_path
+                ],stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+            else:
+                subprocess.run([
+                    "ffmpeg", "-y", "-i", wav_file, "-c:a", "alac", file_path
+                ])
             print(saved_as)
             print("Writing metadata...")
             file = MP4(file_path)
