@@ -79,6 +79,7 @@ Make sure you have the official Spotify or (Apple) Music app installed and ready
 - `-fr` / `--force`: Skips warnings in case if our audio loopback detectors aren't working as intended
 - `-b` / `--blocksize`: Sets the block-size
 - `-sr` / `--samplerate`: Sets the sample rate
+- `-d` / `--debug`: Shows ffmpeg terminal output
 
 If you don't use any of these, they will use the default values. You can check by running `musrec --help`
 
