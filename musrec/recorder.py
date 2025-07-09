@@ -42,7 +42,7 @@ def recorder(track_count,
     if not skipWarning:
         #checks if external (non-python) dependencies / apps are presents :(
         if sys.platform != 'darwin':
-            raise RuntimeError("!! MusRec currently only supports MacOS !!\nIf you're on Linux, please check out https://github.com/astra-the-boop/musrec-linux")
+            raise RuntimeError("!! MusRec (macOS) only supports MacOS !!\nIf you're on Linux, please check out https://github.com/astra-the-boop/musrec-linux")
         if not shutil.which('ffmpeg'):
             sys.exit(1) if input("Missing: ffmpeg; ffmpeg is required for .mp3, .flac, .ogg exports\n\nPlease install it via Homebrew:\nbrew install ffmpeg\n\nEnter [c] to cancel; enter anything else to proceed") == "c" else None
         if not shutil.which('SwitchAudioSource'):
